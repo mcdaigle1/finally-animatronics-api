@@ -1,6 +1,6 @@
 [project]
 name = "finally-animatronics-api"
-version = "0.0.2"
+version = "0.0.3"
 description = ""
 authors = [
     {name = "Michael Daigle",email = "mcdaigle1@gmail.com"}
