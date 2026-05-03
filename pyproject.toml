@@ -13,7 +13,7 @@ dependencies = [
 
 [tool.poetry]
 name = "finally-animatronics-api"
-version = "0.0.9"
+version = "0.0.10"
 description = ""
 authors = ["mcdaigle1@gmail.com"]
 
