@@ -1,6 +1,6 @@
 [project]
 name = "finally-animatronics-api"
-version = "0.0.4"
+version = "0.0.5"
 description = ""
 authors = [
     {name = "Michael Daigle",email = "mcdaigle1@gmail.com"}
@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [tool.poetry]
-packages = [{ include = "finally_animatronics_api" }]
+package-mode = false
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
