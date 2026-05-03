@@ -12,7 +12,7 @@ permissions:
 env:
   AWS_REGION: us-west-1
   ECR_REPOSITORY: finally_animatronics_api_prod
-  ECR_REGISTRY: 450287579526.dkr.ecr.us-east-1.amazonaws.com
+  ECR_REGISTRY: 450287579526.dkr.ecr.us-west-1.amazonaws.com
   IMAGE_TAG: ${{ github.ref_name }}
 
 jobs:
@@ -70,7 +70,7 @@ jobs:
       - name: Login to Amazon ECR
         run: |
           aws ecr get-login-password --region us-east-1 \
-            | docker login --username AWS --password-stdin 450287579526.dkr.ecr.us-east-1.amazonaws.com
+            | docker login --username AWS --password-stdin ${{ env.ECR_REGISTRY }}
       
       - name: Push Docker image
         run: |
