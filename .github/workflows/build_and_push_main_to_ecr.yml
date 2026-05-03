@@ -1,0 +1,75 @@
+name: Build and Push main to ECR
+
+on:
+  push:
+    tags:
+      - "prod-v*"
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AWS_REGION: us-west-1
+  ECR_REPOSITORY: finally_animatronics_api_prod
+  ECR_REGISTRY: 450287579526.dkr.ecr.us-east-1.amazonaws.com
+  IMAGE_TAG: ${{ github.ref_name }}
+
+jobs:
+  build-test-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          repository: mcdaigle1/finally_animatronics_api
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        run: pipx install poetry
+
+      - name: Install dependencies
+        run: poetry install
+
+      # Build to test syntax
+      - name: Compile Python files
+        run: poetry run python -m compileall finally_animatronics_api
+
+      # testing
+      - name: Run tests
+        run: poetry run pytest || [ $? -eq 5 ]
+
+      # Linting
+      - name: Run Ruff
+        run: poetry run ruff check .
+
+      # Type checker
+      - name: Run mypy
+        run: poetry run mypy finally_animatronics_api
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE_ARN }}
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
+            .
+
+      - name: Push Docker image
+        run: |
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
